@@ -26,6 +26,12 @@ switch($action){
 			include("vues/v_sommaire.php");
 		}
 		break;
+        }
+        case 'deconnexion': {
+            $_REQUEST['action'] = null;
+            include("vues/v_connexion.php");
+            deconnecter();
+                break;
 	}
 	default :{
 		include("vues/v_connexion.php");

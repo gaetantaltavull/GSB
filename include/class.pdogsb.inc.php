@@ -10,8 +10,8 @@
  * $monPdoGsb qui contiendra l'unique instance de la classe
  
  * @package default
- * @author JPP
- * @version    1.0
+ * @author JPP,Quentin Aprilante, Gaëtan Taltavull
+ * @version    1.1
  * @link       http://www.php.net/manual/fr/book.pdo.php
  */
 
@@ -85,6 +85,103 @@ class PdoGsb{
 		}
 		return $lesLignes; 
 	}
+        
+/**
+ * Retourne sous forme d'un tableau associatif la ligne de frais hors forfait
+ * concernées par les 3 arguments (clé primaire)
+ 
+ * La boucle foreach ne peut être utilisée ici car on procède
+ * à une modification de la structure itérée - transformation du champ date-
+ 
+ * @param $idVisiteur 
+ * @param $mois sous la forme aaaamm
+ * @param $idFraisHorsForfait
+ * @return tous les champs d'une ligne de frais hors forfait sous la forme d'un tableau associatif 
+*/
+	public function getUnFraisHorsForfait($idVisiteur,$mois,$idFraisHorForfait){
+	    $req = "select * from lignefraishorsforfait where lignefraishorsforfait.idUtilisateur ='$idVisiteur' 
+		and lignefraishorsforfait.mois = '$mois' and lignefraishorsforfait.id = '$idFraisHorForfait'";	
+		$res = PdoGsb::$monPdo->query($req);
+		$lesLignes = $res->fetchAll();
+		$nbLignes = count($lesLignes);
+		for ($i=0; $i<$nbLignes; $i++){
+			$date = $lesLignes[$i]['date'];
+			$lesLignes[$i]['date'] =  dateAnglaisVersFrancais($date);
+		}
+		return $lesLignes; 
+	}
+        
+/**
+ * Modifie la valeur du champ validite à 1 de la table ligneFraisHorsForfait
+ 
+ * Modifie la valeur du champ validite à 1 de la table ligneFraisHorsForfait 
+ * pour un visiteur et un mois donné
+ 
+ * @param $idVisiteur 
+ * @param $mois sous la forme aaaamm
+ * @param $idLeFrais identifiant du frais hors forfait à modifier
+*/
+	/*public function refuserFraisHorsForfait($idVisiteur,$mois,$idLeFrais){
+            $req = "update lignefraishorsforfait set lignefraishorsforfait.validite = 1, 
+            lignefraishorsforfait.libelle = concat('REFUSE :',lignefraishorsforfait.libelle)
+            where lignefraishorsforfait.idUtilisateur = '$idVisiteur' and lignefraishorsforfait.mois = '$mois'
+            and lignefraishorsforfait.id = '$idLeFrais' and lignefraishorsforfait.validite <> 1";
+            PdoGsb::$monPdo->exec($req);
+            
+            /*Vode fonctionnelle avant le test length() :
+             * $req = "update lignefraishorsforfait set lignefraishorsforfait.validite = 1, 
+            lignefraishorsforfait.libelle = concat('REFUSE :',lignefraishorsforfait.libelle)
+            where lignefraishorsforfait.idUtilisateur = '$idVisiteur' and lignefraishorsforfait.mois = '$mois'
+            and lignefraishorsforfait.id = '$idLeFrais' and lignefraishorsforfait.validite <> 1";
+            PdoGsb::$monPdo->exec($req);
+	}*/
+       
+/**
+ * Modifie la valeur du champ validite à 2 de la table ligneFraisHorsForfait
+ 
+ * Modifie la valeur du champ validite à 2 de la table ligneFraisHorsForfait 
+ * pour un visiteur et un mois donné - retire la mention "REFUSE" si elle est présente
+ 
+ * @param $idVisiteur 
+ * @param $mois sous la forme aaaamm
+ * @param $idLeFrais identifiant du frais hors forfait à modifier
+*/
+	/*public function validerFraisHorsForfait($idVisiteur,$mois,$idLeFrais){
+            $req = "update lignefraishorsforfait set lignefraishorsforfait.validite = 2
+            where lignefraishorsforfait.idUtilisateur = '$idVisiteur' and lignefraishorsforfait.mois = '$mois'
+            and lignefraishorsforfait.id = '$idLeFrais'";
+            PdoGsb::$monPdo->exec($req);
+            $req = "update lignefraishorsforfait 
+                set lignefraishorsforfait.libelle = substr(lignefraishorsforfait.libelle,9) 
+                where lignefraishorsforfait.idUtilisateur = '$idVisiteur' 
+                and lignefraishorsforfait.mois = '$mois' and lignefraishorsforfait.id = '$idLeFrais' 
+                and lignefraishorsforfait.libelle like 'REFUSE :%'";
+            PdoGsb::$monPdo->exec($req);
+            $req = "update fichefrais 
+                set fichefrais.nbJustificatifs = fichefrais.nbJustificatifs + 1, fichefrais.montantValide = fichefrais.montantValide + (select lignefraishorsforfait.montant from lignefraishorsforfait where
+                lignefraishorsforfait.idUtilisateur = '$idVisiteur' and lignefraishorsforfait.mois = '$mois'
+                and lignefraishorsforfait.id = '$idLeFrais') where fichefrais.idUtilisateur = '$idVisiteur' and 
+                    mois = '$mois'";
+            PdoGsb::$monPdo->exec($req);
+	}*/
+        
+        public function MajFraisHorsForfait($idVisiteur,$mois,$leFraisHorsForfait){
+            $id = $leFraisHorsForfait['id'];
+            $libelle = $leFraisHorsForfait['libelle'];
+            $montant = $leFraisHorsForfait['montant'];
+            $validite = $leFraisHorsForfait['validite'];
+            echo $validite;
+            echo $id;
+            
+            $req = "update lignefraishorsforfait set lignefraishorsforfait.libelle = '$libelle',
+                    lignefraishorsforfait.montant = '$montant', lignefraishorsforfait.validite = '$validite'
+                where lignefraishorsforfait.idUtilisateur = '$idVisiteur' and lignefraishorsforfait.mois = '$mois'
+                and lignefraishorsforfait.id = '$id'";
+            PdoGsb::$monPdo->exec($req);
+
+	}
+    
+        
 /**
  * Retourne le nombre de justificatif d'un visiteur pour un mois donné
  
@@ -93,7 +190,7 @@ class PdoGsb{
  * @return le nombre entier de justificatifs 
 */
 	public function getNbjustificatifs($idVisiteur, $mois){
-		$req = "select fichefrais.nbjustificatifs as nb from  fichefrais where fichefrais.idvisiteur ='$idVisiteur' and fichefrais.mois = '$mois'";
+                $req = "select fichefrais.nbjustificatifs as nb from  fichefrais where fichefrais.idUtilisateur ='$idVisiteur' and fichefrais.mois = '$mois'";
 		$res = PdoGsb::$monPdo->query($req);
 		$laLigne = $res->fetch();
 		return $laLigne['nb'];
@@ -127,6 +224,18 @@ class PdoGsb{
 		$lesLignes = $res->fetchAll();
 		return $lesLignes;
 	}
+        
+        /**
+ * Retourne tous les libelles de la table FraisForfait
+ 
+ * @return un tableau associatif 
+*/
+	public function getLesLibelleFrais(){
+		$req = "select fraisforfait.libelle as idfrais from fraisforfait order by fraisforfait.id";
+		$res = PdoGsb::$monPdo->query($req);
+		$lesLignes = $res->fetchAll();
+		return $lesLignes;
+	}
 /**
  * Met à jour la table ligneFraisForfait
  
@@ -136,7 +245,6 @@ class PdoGsb{
  * @param $idVisiteur 
  * @param $mois sous la forme aaaamm
  * @param $lesFrais tableau associatif de clé idFrais et de valeur la quantité pour ce frais
- * @return un tableau associatif 
 */
 	public function majFraisForfait($idVisiteur, $mois, $lesFrais){
 		$lesCles = array_keys($lesFrais);
@@ -158,7 +266,7 @@ class PdoGsb{
 */
 	public function majNbJustificatifs($idVisiteur, $mois, $nbJustificatifs){
 		$req = "update fichefrais set nbjustificatifs = $nbJustificatifs 
-		where fichefrais.idvisiteur = '$idVisiteur' and fichefrais.mois = '$mois'";
+		where fichefrais.idutilisateur = '$idVisiteur' and fichefrais.mois = '$mois'";
 		PdoGsb::$monPdo->exec($req);	
 	}
 /**
@@ -298,5 +406,100 @@ class PdoGsb{
 		where fichefrais.idUtilisateur ='$idVisiteur' and fichefrais.mois = '$mois'";
 		PdoGsb::$monPdo->exec($req);
 	}
+
+/**
+ * Renvoie un tableau contennt la liste de tous les visiteurs
+ 
+ * @return type array()
+ */        
+        public function getLesVisiteurs() {
+            $req = "select id,nom, prenom from Utilisateur where type = 1";
+            $res = PdoGsb::$monPdo->query($req);
+            $lesUtilisateurs =array();
+            $laLigne = $res->fetch();
+            while($laLigne != null) {
+                $id = $laLigne['id'];
+                $nom = $laLigne['nom'];
+                $prenom = $laLigne['prenom'];
+                        
+                $lesUtilisateurs["$id"]=array(
+                "id"=>"$id",    
+                "nom"=>"$nom",
+                "prenom"  => "$prenom"
+                );
+                $laLigne = $res->fetch(); 
+            }
+                    
+            return $lesUtilisateurs;
+        }
+        
+/** 
+ * 
+ * Transaction effectuant le report d'un frais hors forfait au mois suivant.
+ * Le frais est supprimé et reporté sur la fiche du mois suivant. Si cette fiche
+ *  n'existe pas, elle est automatiquement créer.
+ 
+ * @param type $idVisiteur
+ * @param type $idFraisHorsForfait
+ * @param type $libelle
+ * @param type $date sous la forme jj/mm/aaaa
+ * @param type $montant
+ * @param type $mois sous la forme aaaamm
+ */        
+        public function transactionReportHorsForfait($idVisiteur,$idFraisHorsForfait,$libelle,$date,$montant,$mois) {
+            try {
+                PdoGSB::$monPdo->begintransaction();
+                $this->supprimerFraisHorsForfait($idFraisHorsForfait);
+                $moisSuivant = addMois($mois);
+                if($this->estPremierFraisMois($idVisiteur,$moisSuivant)){
+                    $this->creeNouvellesLignesFrais($idVisiteur,$moisSuivant);
+                }
+                
+                $this->creeNouveauFraisHorsForfait($idVisiteur,$moisSuivant,$libelle,$date,$montant);
+                
+                PdoGsb::$monPdo->commit();
+            }
+            catch (Exception $e) {
+                PdoGsb::$monPdo->rollback();
+            }
+        }
+        
+/** Récupère le montant correspondant à une fiche de frais identifier par les deux paramètres
+ * 
+ * @param type $idVisiteur
+ * @param type $mois
+ * @return type montant
+ */        
+        public function getMontantFicheFrais($idVisiteur,$mois) {
+            $req = "select fichefrais.montantValide as montant from  fichefrais where fichefrais.idUtilisateur ='$idVisiteur' and fichefrais.mois = '$mois'";
+            $res = PdoGsb::$monPdo->query($req);
+            $laLigne = $res->fetch();
+            return $laLigne['montant'];
+        }
+/**
+ * Met à jour le montant d'une fiche de frais identifier par les deux premier paramètres par le montant du troisième paramètres
+ * 
+ * @param type $idVisiteur
+ * @param type $mois
+ * @param type $montant
+ */        
+        public function updateMontantFicheFrais($idVisiteur,$mois,$montant) {
+            $req = "update fichefrais set fichefrais.montantValide = '$montant' where fichefrais.idUtilisateur ='$idVisiteur' and fichefrais.mois = '$mois'";
+            PdoGsb::$monPdo->exec($req);
+        }
+        
+        
+        public function transactionModifierEtatHorsForfait($idVisiteur,$leFraisHorsForfait,$montant,$mois,$nbJustificatifs) {
+            try {
+                PdoGSB::$monPdo->begintransaction();
+                $this->majNbJustificatifs($idVisiteur,$mois, $nbJustificatifs);
+                $this->updateMontantFicheFrais($idVisiteur,$mois,$montant);
+                $this->MajFraisHorsForfait($idVisiteur,$mois,$leFraisHorsForfait);
+                PdoGsb::$monPdo->commit();
+            }
+            catch (Exception $e) {
+                PdoGsb::$monPdo->rollback();
+            }
+        }
 }
 ?>

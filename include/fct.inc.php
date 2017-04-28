@@ -3,8 +3,8 @@
  * Fonctions pour l'application GSB
  
  * @package default
- * @author JPP
- * @version    1.0
+ * @author JPP,Quentin Aprilante
+ * @version    1.1
  */
  /**
  * Teste si un quelconque visiteur est connecté
@@ -30,6 +30,7 @@ function connecter($id,$nom,$prenom,$typeUtilisateur){
  * Détruit la session active
  */
 function deconnecter(){
+        session_unset();
 	session_destroy();
 }
 /**
@@ -65,6 +66,33 @@ function getMois($date){
 			$mois = "0".$mois;
 		}
 		return $annee.$mois;
+}
+
+/**
+ * retourne le mois suivant au format jj/mm/aaaa 
+ 
+ * @param $date string representant un date au format  jj/mm/aaaa
+ * @return le mois suivant sous forme d'un string au format jj/mm/aaaa 
+*/
+function addMois($date){
+    $annee = (int)substr($date,0,4);
+    $mois = (int)substr($date,4,2);
+    $dateRenvoyer;
+    if ($mois == 12) {
+        $mois = 1;
+        $annee = $annee + 1;
+    }
+    else {
+        $mois = $mois + 1;
+    }
+    
+    if ($mois < 10) {
+        $dateRenvoyer = $annee . "0" . $mois;
+    } else {
+        $dateRenvoyer = $annee . $mois;
+    }
+    return $dateRenvoyer;
+		
 }
 
 /* gestion des erreurs*/
@@ -198,6 +226,31 @@ function nbErreurs(){
 	}
 	else{
 	   return count($_REQUEST['erreurs']);
+	}
+}
+
+/**
+ * Ajoute le libellé d'une message au tableau des messages 
+ 
+ * @param $msg : le libellé du message 
+ */
+function ajouterMessage($msg){
+   if (! isset($_REQUEST['messages'])){
+      $_REQUEST['messages']=array();
+	} 
+   $_REQUEST['messages'][]=$msg;
+}
+/**
+ * Retoune le nombre de lignes du tableau des erreurs 
+ 
+ * @return le nombre d'erreurs
+ */
+function nbMessages(){
+   if (!isset($_REQUEST['messages'])){
+	   return 0;
+	}
+	else{
+	   return count($_REQUEST['messages']);
 	}
 }
 ?>

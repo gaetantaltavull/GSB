@@ -4,7 +4,10 @@ $idVisiteur = $_SESSION['idUtilisateur'];
 $mois = getMois(date("d/m/Y"));
 $numAnnee =substr( $mois,0,4);
 $numMois =substr( $mois,4,2);
-$action = $_REQUEST['action'];
+if ($_SESSION['typeUtilisateur'] == "Visiteur") {
+    $action = $_REQUEST['action'];
+}
+else $action = 'accesInterdit';
 switch($action){
 	case 'saisirFrais':{
 		if($pdo->estPremierFraisMois($idVisiteur,$mois)){
@@ -41,10 +44,15 @@ switch($action){
 	    $pdo->supprimerFraisHorsForfait($idFrais);
 		break;
 	}
+        case 'accesInterdit':{
+            include("vues/v_accesInterdit.php");
+	}
 }
-$lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur,$mois);
-$lesFraisForfait= $pdo->getLesFraisForfait($idVisiteur,$mois);
-include("vues/v_listeFraisForfait.php");
-include("vues/v_listeFraisHorsForfait.php");
+if ($action != 'accesInterdit') {
+    $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur,$mois);
+    $lesFraisForfait= $pdo->getLesFraisForfait($idVisiteur,$mois);
+    include("vues/v_listeFraisForfait.php");
+    include("vues/v_listeFraisHorsForfait.php");
+}
 
 ?>

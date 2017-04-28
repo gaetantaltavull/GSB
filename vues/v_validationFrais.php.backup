@@ -1,0 +1,105 @@
+
+
+<?php 
+    if ($_POST['lstMois'] != "-1") {
+        
+    ?>
+
+<!------------ FORFAIT ---------------->
+
+
+
+<h3>Contrôle des frais forfaitisés</h3>
+    <form action="index.php?uc=validerFrais&action=validerForfait" method="POST">
+        <table class="listeLegere">
+            <tr>
+                <?php
+                foreach ($lesLibelleFraisForfait as $unLibelleFrais) {
+                    $libelle = current($unLibelleFrais);
+                    echo "<th>$libelle</th>";
+                }
+                ?>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+            </tr>
+            <?php
+            foreach ($lesFraisForfait as $unFraisForfait) {
+                $quantite = $unFraisForfait['quantite'];
+                $idFrais = $unFraisForfait['idfrais'];
+                ?>
+                <td>
+                    <input type="text" id="idFrais" name="lesFrais[<?php echo $idFrais ?>]" size="10" maxlength="5" value="<?php echo $quantite ?>" >
+                </td>
+                <?php
+            }
+            ?>
+            <td>
+                <input id="ok" type="submit" value="Valider" size="20" />
+            </td>
+            <td>
+                <input id="annuler" type="reset" value="Annuler" size="20" />
+            </td>
+        </table>
+    </form>
+
+
+
+<!------------ HORS FORFAIT ---------------->
+<?php
+    if (count($lesFraisHorsForfait) > 0) { ?>
+<h3>Contrôle des frais hors forfait</h3>
+    <form method="POST" target="">
+        
+        <!-----------TABLEAU---------------->
+        
+        <table class="listeLegere">
+            
+            <!-----------TABLEAU-ENTETE---------------->
+            
+            <tr>
+                <th>Libellé</th>
+                <th>Montant</th>
+                <th>Date</th>
+                <th></th>
+                <th></th>
+            </tr>
+            
+            <!-----------TABLEAU-CORPS---------------->
+            
+            <?php
+            foreach ($lesFraisHorsForfait as $unFraisHorsForfait) {
+                $idFraisHorForfait = $unFraisHorsForfait['id'];
+                $libelle = $unFraisHorsForfait['libelle'];
+                $montant = $unFraisHorsForfait['montant'];
+                $date = $unFraisHorsForfait['date'];
+                ?>
+            <tr>
+                <td><?php echo $libelle ?></td>
+                <td><?php echo $montant ?></td>
+                <td><?php echo $date ?></td>
+                <td><a href ="www.google.com" class="button">Accepter</a></td>
+                <td><a href ="www.google.com" class="button">Rejeter</a></td>
+            </tr>
+                <?php
+            }
+            ?>
+            <td>
+                
+            </td>
+            <td>
+                
+            </td>
+        </table>
+        
+        <!-----------TABLEAU-FIN---------------->
+    </form>
+
+    <?php }
+    } else { ?>
+<p> Pas de fiche de frais pour ce visiteur ce mois</p>
+<?php }
+?>
