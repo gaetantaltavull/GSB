@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("include/fct.inc.php");
-require_once ("include/class.pdogsb.inc.php");
+require_once("include/class.pdogsb.inc.php");
 include("vues/v_entete.php") ;
 include('vues/v_sommaire.php');
 $pdo = PdoGsb::getPdoGsb();
