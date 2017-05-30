@@ -1,6 +1,6 @@
 <?php
 
-if ($_SESSION['typeUtilisateur'] == "Comptable") {
+if ($_SESSION['typeUtilisateur'] == "Comptable" && isset($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
 } else {
     $action = "accesInterdit";
@@ -140,7 +140,7 @@ if (isset($utilisateurEnSelection) && isset($leMois)) {
             $lesFraisForfait = $pdo->getLesFraisForfait($utilisateurEnSelection, $leMois);
             $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($utilisateurEnSelection, $leMois);
             include("vues/v_validationFrais.php");
-        } else if ($action != choixUtilisateur){
+        } else if ($action != 'choixUtilisateur'){
             ajouterErreur("La fiche sélectionné est en cours de saisie où à déja été validé");
             include("vues/v_erreurs.php");
         }

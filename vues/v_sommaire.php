@@ -7,7 +7,7 @@
     
     
     <?php 
-    if (estConnecte() && (isset($_REQUEST['uc']) && $_REQUEST['action'] != 'deconnexion')) {
+    if (estConnecte() && ((isset($_REQUEST['action']) && $_REQUEST['action'] != 'deconnexion')) || !isset($_REQUEST['action'])) {
     ?>
     <div id="menuItem" class="list-group">
         <p href="#" class="list-group-item active">

@@ -1,5 +1,7 @@
 <?php
 session_start();
+//Désactive les erreurs pour la production
+error_reporting(0);
 require_once("include/fct.inc.php");
 require_once("include/class.pdogsb.inc.php");
 include("vues/v_entete.php") ;
