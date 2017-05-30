@@ -1,4 +1,4 @@
-﻿
+﻿<?php if (count($lesFraisHorsForfait) > 0) { ?>
 <table class="listeLegere">
     <caption>Descriptif des éléments hors forfait
     </caption>
@@ -30,6 +30,7 @@
     ?>	  
 
 </table>
+<?php } ?>
 
 <div class="form-little">
     <form action="index.php?uc=gererFrais&action=validerCreationFrais" method="post">
