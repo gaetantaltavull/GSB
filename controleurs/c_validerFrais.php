@@ -1,7 +1,5 @@
 <?php
 
-include('vues/v_sommaire.php');
-
 if ($_SESSION['typeUtilisateur'] == "Comptable") {
     $action = $_REQUEST['action'];
 } else {
@@ -22,26 +20,27 @@ switch ($action) {
 
             break;
         }
+        //L'utilisateur 
     case "validerForfait" : {
         $lesFrais = $_POST['lesFrais'];
         $pdo->majFraisForfait($_SESSION['utilisateurCible'],$_SESSION['moisCible'],$lesFrais);
         ajouterMessage("Le frais forfaitisé à été validé");
-        include("vues/v_messageConfirmation.php");
+        break;
     }
     case "validerHorsForfait" : {
         $idFraisHorsForfait = $_GET['idHF'];
         $leFraisHorsForfait = $pdo->getUnFraisHorsForfait($_SESSION['utilisateurCible'],$_SESSION['moisCible'],$idFraisHorsForfait);
-        if ($leFraisHorsForfait[0]['validite'] == 2) {
+        if ($leFraisHorsForfait[0]['idEtat'] == 'VA') {
             ajouterErreur("Le frais hors forfait à déja été validé.");
         }
         else {
-            if ($leFraisHorsForfait[0]['validite'] == 1 && substr($leFraisHorsForfait[0]['libelle'],0,8) == "REFUSE :" ) {
+            if ($leFraisHorsForfait[0]['idEtat'] == 'RE' && substr($leFraisHorsForfait[0]['libelle'],0,8) == "REFUSE :" ) {
                 $leFraisHorsForfait[0]['libelle'] = substr($leFraisHorsForfait[0]['libelle'],8);
             }
             $nbJustificatifs = $pdo->getNbjustificatifs($_SESSION['utilisateurCible'],$_SESSION['moisCible']);
             $montant = $leFraisHorsForfait[0]['montant'];
             $ancienMontant = $pdo->getMontantFicheFrais($_SESSION['utilisateurCible'],$_SESSION['moisCible']);
-            $leFraisHorsForfait[0]['validite'] = 2;
+            $leFraisHorsForfait[0]['idEtat'] = 'VA';
             $pdo->transactionModifierEtatHorsForfait($_SESSION['utilisateurCible'],$leFraisHorsForfait[0],$ancienMontant + $montant,$_SESSION['moisCible'],$nbJustificatifs + 1);
             ajouterMessage("Frais hors forfait validé");
         }
@@ -50,24 +49,22 @@ switch ($action) {
     case "rejeterHorsForfait" : {
         $idFraisHorsForfait = $_GET['idHF'];
         $leFraisHorsForfait = $pdo->getUnFraisHorsForfait($_SESSION['utilisateurCible'],$_SESSION['moisCible'],$idFraisHorsForfait);
-        if ($leFraisHorsForfait[0]['validite'] == 1) {
+        if ($leFraisHorsForfait[0]['idEtat'] == 'RE') {
             ajouterErreur("Le frais hors forfait à déja été refusé.");
         }
         else {
             $nbJustificatifs = $pdo->getNbjustificatifs($_SESSION['utilisateurCible'],$_SESSION['moisCible']);
-            $montant = $leFraisHorsForfait[0]['montant'];
+            if ($leFraisHorsForfait[0]['idEtat'] == 'VA') {
+                $montant = $leFraisHorsForfait[0]['montant'];
+            } else {
+                $montant = 0;
+            }
             $ancienMontant = $pdo->getMontantFicheFrais($_SESSION['utilisateurCible'],$_SESSION['moisCible']);
-            $leFraisHorsForfait[0]['validite'] = 1;
+            $leFraisHorsForfait[0]['idEtat'] = 'RE';
             $leFraisHorsForfait[0]['libelle'] = "REFUSE :" . $leFraisHorsForfait[0]['libelle'];
             $pdo->transactionModifierEtatHorsForfait($_SESSION['utilisateurCible'],$leFraisHorsForfait[0],$ancienMontant - $montant,$_SESSION['moisCible'],$nbJustificatifs - 1);
             ajouterMessage("Frais hors forfait refusé");
         }
-        
-
-
-
-
-
         //$pdo->refuserFraisHorsForfait($_SESSION['utilisateurCible'],$_SESSION['moisCible'],$idFraisHorsForfait);
         break;
     }
@@ -103,18 +100,18 @@ if (count($lesUtilisateurs) > 0) {
     //On prend le premier utilisateur pour l'initialization
     
     if (isset($_GET['utilisateurCible'])) {
-        $utilisateurSelectionner = $_GET['utilisateurCible'];
-        $_SESSION['utilisateurCible'] = $utilisateurSelectionner;
+        $utilisateurEnSelection = $_GET['utilisateurCible'];
+        $_SESSION['utilisateurCible'] = $utilisateurEnSelection;
     }
     elseif (isset($_SESSION['utilisateurCible'])) {
-        $utilisateurSelectionner = $_SESSION['utilisateurCible'];
+        $utilisateurEnSelection = $_SESSION['utilisateurCible'];
     }
     else {
-        $utilisateurSelectionner = key($lesUtilisateurs);
-        $_SESSION['utilisateurCible'] = $utilisateurSelectionner;
+        $utilisateurEnSelection = key($lesUtilisateurs);
+        $_SESSION['utilisateurCible'] = $utilisateurEnSelection;
     }
     
-    $lesMois = $pdo->getLesMoisDisponibles($utilisateurSelectionner);
+    $lesMois = $pdo->getLesMoisDisponibles($utilisateurEnSelection);
     
     
     if (isset($_POST['lstMois'])) {
@@ -135,15 +132,15 @@ if (count($lesUtilisateurs) > 0) {
 }
 
 
-if (isset($utilisateurSelectionner) && isset($leMois)) {
+if (isset($utilisateurEnSelection) && isset($leMois)) {
     $laFiche = $pdo->getLesInfosFicheFrais($_SESSION['utilisateurCible'],$_SESSION['moisCible']);
     if ($leMois != -1) {
         if ($laFiche['idEtat'] == "CL") {
             $lesLibelleFraisForfait = $pdo->getLesLibelleFrais();
-            $lesFraisForfait = $pdo->getLesFraisForfait($utilisateurSelectionner, $leMois);
-            $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($utilisateurSelectionner, $leMois);
+            $lesFraisForfait = $pdo->getLesFraisForfait($utilisateurEnSelection, $leMois);
+            $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($utilisateurEnSelection, $leMois);
             include("vues/v_validationFrais.php");
-        } else {
+        } else if ($action != choixUtilisateur){
             ajouterErreur("La fiche sélectionné est en cours de saisie où à déja été validé");
             include("vues/v_erreurs.php");
         }

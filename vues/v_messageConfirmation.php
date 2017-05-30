@@ -1,4 +1,4 @@
-<div class ="messages">
+<div class ="alert alert-success messages">
 <ul>
 <?php 
 foreach($_REQUEST['messages'] as $message)

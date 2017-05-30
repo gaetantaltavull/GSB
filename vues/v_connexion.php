@@ -1,21 +1,24 @@
-﻿<div id="contenu">
-      <h2>Identification utilisateur</h2>
 
 
-<form method="POST" action="index.php?uc=connexion&action=valideConnexion">
-   
-    
-			<p>
-       <label for="nom">Login*</label>
-       <input id="login" type="text" name="login"  size="30" maxlength="45">
-      </p>
-			<p>
-				<label for="mdp">Mot de passe*</label>
-			  <input id="mdp"  type="password"  name="mdp" size="30" maxlength="45">
-      </p>
-         <input type="submit" value="Valider" name="valider">
-         <input type="reset" value="Annuler" name="annuler"> 
-      </p>
-</form>
+        ﻿<div id="connexion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Identification utilisateur</h3>
+                </div>
+                <div class="panel-body">
 
-</div>
+                     <form method="POST" action="index.php?uc=connexion&action=valideConnexion">
+
+                       <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Login</span>
+                            <input type="text" name="login" id="login" class="form-control" placeholder="" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon2">Mot de passe</span>
+                            <input type="password" name="mdp" id="mdp" class="form-control" placeholder="" aria-describedby="basic-addon2">
+                        </div>
+                        <input class="btn btn-default pull-right" type="submit" name="valider" value="Se connecter">
+                    </form>
+                </div>
+            </div>
+        </div>

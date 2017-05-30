@@ -11,7 +11,7 @@
  
  * @package default
  * @author JPP,Quentin Aprilante, Gaëtan Taltavull
- * @version    1.1
+ * @version    1.9
  * @link       http://www.php.net/manual/fr/book.pdo.php
  */
 
@@ -169,12 +169,10 @@ class PdoGsb{
             $id = $leFraisHorsForfait['id'];
             $libelle = $leFraisHorsForfait['libelle'];
             $montant = $leFraisHorsForfait['montant'];
-            $validite = $leFraisHorsForfait['validite'];
-            echo $validite;
-            echo $id;
+            $etat = $leFraisHorsForfait['idEtat'];
             
             $req = "update lignefraishorsforfait set lignefraishorsforfait.libelle = '$libelle',
-                    lignefraishorsforfait.montant = '$montant', lignefraishorsforfait.validite = '$validite'
+                    lignefraishorsforfait.montant = '$montant', lignefraishorsforfait.idEtat = '$etat'
                 where lignefraishorsforfait.idUtilisateur = '$idVisiteur' and lignefraishorsforfait.mois = '$mois'
                 and lignefraishorsforfait.id = '$id'";
             PdoGsb::$monPdo->exec($req);
@@ -341,7 +339,7 @@ class PdoGsb{
 	public function creeNouveauFraisHorsForfait($idVisiteur,$mois,$libelle,$date,$montant){
 		$dateFr = dateFrancaisVersAnglais($date);
 		$req = "insert into lignefraishorsforfait 
-		values('','$idVisiteur','$mois','$libelle','$dateFr','$montant',0)";
+		values('','$idVisiteur','$mois','$libelle','$dateFr','$montant','NT')";
 		PdoGsb::$monPdo->exec($req);
 	}
 /**
@@ -387,7 +385,7 @@ class PdoGsb{
 */	
 	public function getLesInfosFicheFrais($idVisiteur,$mois){
 		$req = "select ficheFrais.idEtat as idEtat, ficheFrais.dateModif as dateModif, ficheFrais.nbJustificatifs as nbJustificatifs, 
-			ficheFrais.montantValide as montantValide, etat.libelle as libEtat from  fichefrais inner join Etat on ficheFrais.idEtat = Etat.id 
+			ficheFrais.montantValide as montantValide, etatFicheFrais.libelle as libEtat from  fichefrais inner join etatFicheFrais on ficheFrais.idEtat = etatFicheFrais.id 
 			where fichefrais.idUtilisateur ='$idVisiteur' and fichefrais.mois = '$mois'";
 		$res = PdoGsb::$monPdo->query($req);
 		$laLigne = $res->fetch();
@@ -413,7 +411,7 @@ class PdoGsb{
  * @return type array()
  */        
         public function getLesVisiteurs() {
-            $req = "select id,nom, prenom from Utilisateur where type = 1";
+            $req = "select id,nom, prenom from utilisateur where type = 'V'";
             $res = PdoGsb::$monPdo->query($req);
             $lesUtilisateurs =array();
             $laLigne = $res->fetch();

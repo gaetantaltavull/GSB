@@ -11,6 +11,7 @@ switch($action){
 	case 'valideConnexion':{
 		$login = $_REQUEST['login'];
 		$mdp = $_REQUEST['mdp'];
+                $mdp = hash('sha256',$mdp);
 		$utilisateur = $pdo->getInfosUtilisateur($login,$mdp);
 		if(!is_array( $utilisateur)){
 			ajouterErreur("Login ou mot de passe incorrect");

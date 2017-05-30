@@ -1,7 +1,5 @@
 <?php
 
-include('vues/v_sommaire.php');
-
 if ($_SESSION['typeUtilisateur'] == "Comptable") {
     $action = $_REQUEST['action'];
 } else {
@@ -39,18 +37,18 @@ if (nbMessages() > 0) {
 if (count($lesUtilisateurs) > 0) {
     //On prend le premier utilisateur pour l'initialization des mois si le formulaire n'a pas été validé
     if (isset($_GET['utilisateurCible'])) {
-        $utilisateurSelectionner = $_GET['utilisateurCible'];
-        $_SESSION['utilisateurCible'] = $utilisateurSelectionner;
+        $utilisateurEnSelection = $_GET['utilisateurCible'];
+        $_SESSION['utilisateurCible'] = $utilisateurEnSelection;
     }
     elseif (isset($_SESSION['utilisateurCible'])) {
-        $utilisateurSelectionner = $_SESSION['utilisateurCible'];
+        $utilisateurEnSelection = $_SESSION['utilisateurCible'];
     }
     else {
-        $utilisateurSelectionner = key($lesUtilisateurs);
-        $_SESSION['utilisateurCible'] = $utilisateurSelectionner;
+        $utilisateurEnSelection = key($lesUtilisateurs);
+        $_SESSION['utilisateurCible'] = $utilisateurEnSelection;
     }
     
-    $lesMois = $pdo->getLesMoisDisponibles($utilisateurSelectionner);
+    $lesMois = $pdo->getLesMoisDisponibles($utilisateurEnSelection);
     
     if (isset($_POST['lstMois'])) {
         $leMois = $_POST['lstMois'];
@@ -67,13 +65,13 @@ if (count($lesUtilisateurs) > 0) {
     include('vues/v_listeUtilisateurs.php');
 }
 
-if (isset($utilisateurSelectionner) && isset($leMois) && $leMois != -1) {
+if (isset($utilisateurEnSelection) && isset($leMois) && $leMois != -1) {
     
     $numAnnee = substr($leMois,0,4);
     $numMois = substr($leMois,4,2);
-    $leFrais = $pdo->getLesInfosFicheFrais($utilisateurSelectionner,$leMois);
-    $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($utilisateurSelectionner,$leMois);
-    $lesFraisForfait= $pdo->getLesFraisForfait($utilisateurSelectionner,$leMois);
+    $leFrais = $pdo->getLesInfosFicheFrais($utilisateurEnSelection,$leMois);
+    $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($utilisateurEnSelection,$leMois);
+    $lesFraisForfait= $pdo->getLesFraisForfait($utilisateurEnSelection,$leMois);
     
     $libEtat = $leFrais['libEtat'];
     $montantValide = $leFrais['montantValide'];

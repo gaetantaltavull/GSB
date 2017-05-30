@@ -4,24 +4,23 @@ body{
 	background-image: url(imgs/FONDGLOBAL.jpg);
 	background-repeat: repeat-x;
   margin:0% 0%;
-  padding : 0.6em;
   font-family:"Trebuchet MS",Verdana,Geneva,Arial,Helvetica,sans-serif;
-  font-size:0.8em;
+  font-size:1em;
 }
 #page {
   background-color:white;
-  width : 65%;
+  width : 100%;
   margin : auto ;
-  border : 0.2em solid black;
-  padding : 0.1em;
+  padding-top: 98;
 }
 #entete{
-  background-color:rgb(72,198,236);
+        background-color:#77AADD;
+        position:absolute;
 	color : #980101;
-	border: solid 0.1em #980101;
-	height: 154px;
-	padding: 0em;
+	height: 98px;
+        width:100%;
 	border-collapse: separate;
+        top:0px;
 }
 #pied{
   clear : both;
@@ -33,21 +32,23 @@ body{
 	border-collapse: separate;
 }
 #menuGauche {
-	margin-top : 0.8em;
-	padding: 1em;
 	background-color: white;
+        position:fixed;
+        top:0px;
+        left:0px;
 	color: rgb(0,85,227);
-	float: left;
-	width: 14%;
+	width: 168px;
+        height: 100%;
+        border-right: solid 0.1em #980101;
 }
 
 #contenu{
 	border: none;
 	padding: 1.3em;
 	background-color: white;
-	border-left :  groove 0.8em #980101;
-  margin-top : 1.2em;
-	margin-left: 18%;
+        margin-top : 10px;
+	margin-left: 200px;
+        width:80%;
 /* permet de fixer une hauteur mini sur les navigateurs modernes */
   min-height:27em;
 /* pour obtenir le m�me effet sur IE, sachant que si le contenu d�passe, il
@@ -61,38 +62,16 @@ html>body #contenu{
   height:auto;
 }
 
-/* style � appliquer � la balise ul d'identifiant menulist */
-ul#menuList{
-    list-style:none;
-    margin:0px;
-    padding:0px;
-    width:98%;
-    font-size: 1em;
-}
 
-/* style � appliquer aux �l�ments de la balise ul d'identifiant menulist */
-ul#menuList li {
-    position:relative;
-    margin:0px;
-    padding:0px;
-}
-
-/* apparences des liens dans listes et sous-listes non num�rot�es */
-ul#menuList a {
-    color:rgb(0,85,227);
-    display:block;
-    text-decoration:none;
-    width:100%;
-}
-ul#menuList a:hover {
-    background: rgb(0,85,227);
-    color: white;
-}
 
 #entete #logoGSB {
   float : left;
-  width : 238px;
-  height : 152px;
+  width : 158px;
+  height : 98px;
+}
+
+#menuGauche #logoGSB {
+  margin:5px;
 }
 
 #entete h1 {
@@ -165,7 +144,6 @@ button{
   vertical-align:middle;
 }
 input:hover, textarea:hover, select:hover{
-  background-color : #FAFAE6;
   cursor : pointer;
 }
 
@@ -181,10 +159,8 @@ taille de caract�res l�g�rement sup�rieure � la normale */
 /*  Le texte des messages de confirmation est de couleur vert pale sur fond ocre et de 
 taille de caract�res l�g�rement sup�rieure � la normale */
 .messages{ 
-   background-color:rgb(184, 249, 241);
-   color:rgb(1, 215, 88);
-   font-size:1.1em;
-   width:95%;
+   margin-left: 180px;
+   width:80%;
 }
 
 
@@ -212,12 +188,9 @@ taille de caract�res l�g�rement sup�rieure � la normale */
 /* Style pour les liens de la page principale */
 #contenu a {
    font-size : 1.1em;
-   color:gray;
    text-decoration:none;
 }
 #contenu a:hover {
-   text-decoration:underline;
-   background-color : #D9BB7A;
    font-size : 1em;
 }
 
@@ -294,10 +267,6 @@ table.listeLegere th.libelle{
 	font-weight: bold;
 	color: #1D2941;
 	text-decoration: none;
-	border : 1px solid #6988BE;
-	padding-left: 25px;
-	background-color: #E9F1FE;
-  height : 28px;
 }
 
 #contenu img {
@@ -305,3 +274,39 @@ table.listeLegere th.libelle{
   float : left;
 
 }
+
+/* CSS GAQU*/
+
+#connexion {
+   width:400px;
+   height: 300px;
+   margin:auto;
+   margin-top: 150px;
+}
+
+#menuItem {
+    margin:50px 10px 0px 10px;
+}
+
+#valider-fiche {
+    margin-top:20px;
+}
+
+.form-little {
+    width:400px;
+    padding: 30px 0px 0px 0px;
+    margin: auto;
+    
+}
+
+.table-button-icon {
+    width:44px;
+    margin:auto;
+}
+
+
+/*Modification CSS Bootstrap*/
+.input-group {
+    margin: 10px 00px;
+}
+
